@@ -9,6 +9,8 @@ const event = JSON.parse(fs.readFileSync(process.env.GITHUB_EVENT_PATH, "utf8"))
 const baseUrl = "https://spinbikes.atlassian.net"
 const issueBaseUrl = "/rest/api/2/issue/"
 
+const issueCommentBaseUrl = "/rest/api/3/issue/"
+
 async function main() {
   await processCommits()
 }
@@ -66,6 +68,12 @@ async function processSingleCommit(branch, id, issueKey, message, url) {
   console.log(jiraPushUrl)
   console.log(JSON.stringify(issueComment))
   console.log(headers)
+  
+  var skipComment = await isCommitAlreadyThere(issueKey, id ) 
+
+  if ( skipComment ) {
+	return 
+  }
 
   return await fetch(jiraPushUrl, {
     method: "post",
@@ -73,3 +81,43 @@ async function processSingleCommit(branch, id, issueKey, message, url) {
     headers: headers,
   })
 }
+
+async function isCommitAlreadyThere(issueKey, commit ) {
+  var comments = await searchIssueComments(issueKey)
+  var jsonComments = await comments.json()
+
+  for (var key in jsonComments.comments) {
+    if (jsonComments.comments[key].body) {
+        var commentUrl = jsonComments.comments[key].self
+
+        var comment = await getCommentDetails(commentUrl)
+
+        var commentJson = await comment.json()
+        var fullCommentText = JSON.stringify(commentJson.body.content)
+        if (fullCommentText.includes( commit )) {
+		return true
+        }
+
+    }
+  }
+  return false
+}
+
+async function searchIssueComments(issueKey) {
+  const jiraPushUrl = baseUrl + issueCommentBaseUrl + issueKey + "/comment"
+  var headers = await headersWithAuth({ "Content-Type": "application/json", 'Accept': 'application/json' })
+  return await fetch(jiraPushUrl, {
+    method: "get",
+    headers: headers
+  })
+}
+
+async function getCommentDetails(commentUrl) {
+  var headers = await headersWithAuth({ "Content-Type": "application/json", 'Accept': 'application/json' })
+  return await fetch(commentUrl, {
+    method: "get",
+    headers: headers
+  })
+}
+
+
