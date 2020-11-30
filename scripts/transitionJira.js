@@ -11,5 +11,5 @@ const issueBaseUrl = "/rest/api/2/issue/"
 
 const issueCommentBaseUrl = "/rest/api/3/issue/"
 
-console.log(event)
+console.log("Here you check beep " + event.pull_request.title)
 
