@@ -8,7 +8,7 @@ on:
 jobs:
   generate-matrix:
     name: Generate matrix for merge action of ${{  github.head_ref }}
-    if: github.event.pull_request.merged == true && contains(github.event.pull_request.body, '/release-train-bug-fix')
+    if: github.event.pull_request.merged == true && !contains(github.event.pull_request.labels.*.name, 'no-release')
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
@@ -29,7 +29,7 @@ jobs:
           echo "::set-output name=matrix::$( node scripts/upstream_list.js ${{ github.base_ref }} )"
   merge-upstream-release:
     name: Merge ${{  github.head_ref }} to Upstream Release "${{ matrix.upstream_release }}"
-    if: github.event.pull_request.merged == true && contains(github.event.pull_request.body, '/release-train-bug-fix')
+    if: github.event.pull_request.merged == true && !contains(github.event.pull_request.labels.*.name, 'no-release')
     needs: generate-matrix
     strategy:
       matrix: ${{fromJson(needs.generate-matrix.outputs.matrix)}}
@@ -46,7 +46,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
   merge-to-develop:
     name: Merge ${{  github.head_ref }} to Develop Branch
-    if: github.event.pull_request.merged == true && contains(github.event.pull_request.body, '/release-train-bug-fix')
+    if: github.event.pull_request.merged == true && !contains(github.event.pull_request.labels.*.name, 'no-release')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
