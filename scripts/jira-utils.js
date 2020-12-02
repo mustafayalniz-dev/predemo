@@ -147,11 +147,32 @@ module.exports = {
     return false
   },
 
+  isInReview: async function (issue_id) {
+    const jqlSearch = encodeURIComponent(
+      `project = "${
+        this.projectName
+      }" AND fixVersion = "${this.releaseName()}" AND issueKey="${issue_id}" AND status="In Review"`
+    )
+
+    const jqlSearchUrl = this.jqlSearchBaseUrl + jqlSearch
+    const searchResponse = await fetch(`${this.baseUrl}${jqlSearchUrl}`, {
+      headers: this.headersWithAuth({}),
+    })
+    const searchResponseJson = await searchResponse.json()
+
+    if (Object.keys(searchResponseJson.issues).length > 0) {
+      return true
+    }
+
+    return false
+  },
+
+
   isReleaseReady: async function (issue_id) {
     const jqlSearch = encodeURIComponent(
       `project = "${
         this.projectName
-      }" AND fixVersion = "${this.releaseName()}" AND issueKey="${issue_id}" AND status="Product Release Ready" )`
+      }" AND fixVersion = "${this.releaseName()}" AND issueKey="${issue_id}" AND status="Product Release Ready"`
     )
 
     const jqlSearchUrl = this.jqlSearchBaseUrl + jqlSearch

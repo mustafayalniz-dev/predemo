@@ -2,8 +2,6 @@ name: Create Jira Comment with all commit details in Push
 
 on:
   pull_request:
-    branches:
-      - release_*
     types: [closed]
 
 jobs:
