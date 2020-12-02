@@ -28,7 +28,7 @@ async function getIssueKeys() {
 }
 
 async function transitionIssues( issueKeys ) {
-	issueKeys.forEach(function (issue_id) {
+	issueKeys.forEach(async function (issue_id) {
 		console.log("Transitioning issue " + issue_id + " as Released " )
 //              var issue_id = issue.replace(/https:\/\/spinbikes.atlassian.net\/browse\//, "")
     		var isInReview = await jiraUtils.isInReview(issue_id)
