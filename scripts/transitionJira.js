@@ -36,10 +36,9 @@ async function transitionIssues( issueKeys ) {
 		} catch(err) {
 			console.log(err)
 		}
-//    		if (isInReview) {
-    		if (true) {
+    		if (isInReview) {
       			console.log("Transitioning " + index + "th ticket " + issue_id + " to BuildReady")
-//      			await jiraUtils.transitionRequest(issue_id, jiraUtils.jiraTransitionIdBuildReady)
+      			await jiraUtils.transitionRequest(issue_id, jiraUtils.jiraTransitionIdBuildReady)
     		}
 
 	})
