@@ -12,7 +12,7 @@ const issueBaseUrl = "/rest/api/2/issue/"
 
 const issueCommentBaseUrl = "/rest/api/3/issue/"
 
-var issueKeyRegex = new RegExp("^\[([A-Z]+-[0-9]+[^\]]+)\].+$")
+var issueKeyRegex = new RegExp("^\[[A-Z]+-[0-9]+[^\]]+\].+$")
 
 async function getIssueKeys() {
  	var issueKeys = event.pull_request.title.replace(/^\[([A-Z]+-[0-9]+[^\]]+)\].+$/, "$1")
