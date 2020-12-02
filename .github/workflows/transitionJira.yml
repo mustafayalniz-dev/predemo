@@ -1,0 +1,21 @@
+name: Create Jira Comment with all commit details in Push
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  push:
+    name: Jira Comment Event with commit details
+    if: github.event.pull_request.merged == true && !contains(github.event.pull_request.labels.*.name, 'no-release')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Jira Processing
+        env:
+          JIRA_USERNAME: ${{ secrets.JIRA_USERNAME }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+        run: |
+          npm install node-fetch
+          npm install fs inquirer dotenv
+          node scripts/transitionJira.js
