@@ -12,27 +12,27 @@ const issueBaseUrl = "/rest/api/2/issue/"
 
 const issueCommentBaseUrl = "/rest/api/3/issue/"
 
-var issueKeyRegex = new RegExp("^\[[A-Z]+-[0-9]+[^\]]+\].+$")
+var issueKeyRegex = /^\[[A-Z]+-[0-9]+[^\]]+\].+$/
 
 async function getIssueKeys() {
  	var issueKeys = event.pull_request.title.replace(/^\[([A-Z]+-[0-9]+[^\]]+)\].+$/, "$1")
-	issueKeys = issueKeys.split(",")
+	var issueKeysArray = issueKeys.split(",")
 
+	console.log(issueKeysArray)
 	var issueKeysTrimmed = []
 
-	issueKeys.forEach(function (item) {
-		issueKeysTrimmed.push(item.trim())
+	issueKeysArray.forEach(async function (item) {
+		await issueKeysTrimmed.push(item.trim())
   	})
 
   	return issueKeysTrimmed
 }
 
 async function transitionIssues( issueKeys ) {
-	issueKeys.forEach(async function (issue_id) {
-		console.log("Transitioning issue " + issue_id + " as Released " )
-//              var issue_id = issue.replace(/https:\/\/spinbikes.atlassian.net\/browse\//, "")
+	issueKeys.forEach( async function (index,issue_id) {
     		var isInReview = await jiraUtils.isInReview(issue_id)
-    		if (isInReview) {
+//    		if (isInReview) {
+    		if (true) {
       			console.log("Transitioning " + index + " ticket " + issue_id + " to BuildReady")
 //      			await jiraUtils.transitionRequest(issue_id, jiraUtils.jiraTransitionIdBuildReady)
     		}
@@ -43,10 +43,11 @@ async function transitionIssues( issueKeys ) {
 async function main() {
 	var issueKeys = []
 	if (issueKeyRegex.test(event.pull_request.title)) {
-		issueKeys = getIssueKeys()
-		transitionIssues(issueKeys)
+		issueKeys = await getIssueKeys()
+		await transitionIssues(issueKeys)
 	}
 }
 
+main()
 
 
