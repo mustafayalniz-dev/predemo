@@ -42,7 +42,7 @@ async function transitionIssues( issueKeys ) {
 
 async function main() {
 	var issueKeys = []
-	if if (issueKeyRegex.test(event.pull_request.title)) {
+	if (issueKeyRegex.test(event.pull_request.title)) {
 		issueKeys = getIssueKeys()
 		transitionIssues(issueKeys)
 	}
