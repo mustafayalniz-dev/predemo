@@ -7,7 +7,7 @@ on:
 jobs:
   push:
     name: Jira Comment Event with commit details
-    if: github.event.pull_request.merged == true && !contains(github.event.pull_request.labels.*.name, 'no-release')
+    if: github.event.pull_request.merged == true && !contains(github.event.pull_request.labels.*.name, 'temporary')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
