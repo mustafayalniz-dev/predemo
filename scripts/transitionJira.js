@@ -18,28 +18,27 @@ async function getIssueKeys() {
  	var issueKeys = event.pull_request.title.replace(/^\[([A-Z]+-[0-9]+[^\]]+)\].+$/, "$1")
 	var issueKeysArray = issueKeys.split(",")
 
-	console.log(issueKeysArray)
 	var issueKeysTrimmed = []
 
 	issueKeysArray.forEach(async function (item) {
 		await issueKeysTrimmed.push(item.trim())
   	})
 
+	console.log(issueKeysTrimmed)
   	return issueKeysTrimmed
 }
 
 async function transitionIssues( issueKeys ) {
-	issueKeys.forEach( async function (index,issue_id) {
+	issueKeys.forEach( async function (issue_id, index ) {
 		var isInReview = false
 		try {
     			isInReview = await jiraUtils.isInReview(issue_id)
 		} catch(err) {
 			console.log(err)
 		}
-//    		if (isInReview) {
-    		if (true) {
-      			console.log("Transitioning " + index + " ticket " + issue_id + " to BuildReady")
-//      			await jiraUtils.transitionRequest(issue_id, jiraUtils.jiraTransitionIdBuildReady)
+    		if (isInReview) {
+      			console.log("Transitioning " + index + "th ticket " + issue_id + " to BuildReady")
+      			await jiraUtils.transitionRequest(issue_id, jiraUtils.jiraTransitionIdBuildReady)
     		}
 
 	})
