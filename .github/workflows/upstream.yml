@@ -44,9 +44,20 @@ jobs:
           from_branch: ${{  github.head_ref }}
           target_branch: ${{ matrix.upstream_release }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: pull-request
+        if:   ${{ failure() }}
+        uses: repo-sync/pull-request@v2
+        with:
+          source_branch: ${{  github.head_ref }}
+          destination_branch: ${{ matrix.upstream_release }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          pr_title: "Pulling ${{ github.head_ref }} into ${{ matrix.upstream_release }} "
+          pr_body: "*An automated PR for Release Train Branch ${{ matrix.upstream_release }} * "
+          pr_reviewer: ${{ matrix.reviewers }}
+          pr_assignee: ${{ matrix.assignees }}
   merge-to-develop:
     name: Merge ${{  github.head_ref }} to Develop Branch
-    if: github.event.pull_request.merged == true && !contains(github.event.pull_request.labels.*.name, 'no-release')
+    if: github.event.pull_request.merged == true && !contains(github.event.pull_request.labels.*.name, 'temporary')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -58,4 +69,14 @@ jobs:
           from_branch: ${{  github.head_ref }}
           target_branch: develop
           github_token: ${{ secrets.GITHUB_TOKEN }}
-
+      - name: pull-request
+        if:   ${{ failure() }}
+        uses: repo-sync/pull-request@v2
+        with:
+          source_branch: ${{  github.head_ref }}
+          destination_branch: develop
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          pr_title: "Pulling ${{ github.head_ref }} into develop "
+          pr_body: "*An automated PR for Release Train Branch develop * "
+          pr_reviewer: "mluedke,sbiren"
+          pr_assignee: "mluedke,sbiren"
